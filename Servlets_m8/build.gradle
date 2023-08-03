@@ -1,0 +1,26 @@
+//plugins {
+ //   id 'java'
+ //   id 'war'
+//}
+
+//group = 'com.goit.servletm8'
+//version = '1.0-SNAPSHOT'
+apply plugin: 'java'
+apply plugin: 'war'
+apply plugin: 'application'
+
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testImplementation platform('org.junit:junit-bom:5.9.1')
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+    implementation 'com.google.code.gson:gson:2.10.1'
+    compileOnly 'jakarta.servlet:jakarta.servlet-api:6.0.0'
+}
+
+test {
+    useJUnitPlatform()
+}
