@@ -26,7 +26,7 @@ public class TimezoneValidateFilter extends HttpFilter {
         if (requestedTimeZone == null || requestedTimeZone.equals(GMT_TZ) ) {
             chain.doFilter(req,res);
         } else if (TimeZone.getTimeZone(requestedTimeZone).getID().equals(GMT_TZ)) {
-            res.setStatus(401);
+            res.setStatus(400);
             res.setContentType("text/html; charset=utf-8");
             res.getWriter().write("Invalid Timezone: "+requestedTimeZone);
             res.getWriter().close();
