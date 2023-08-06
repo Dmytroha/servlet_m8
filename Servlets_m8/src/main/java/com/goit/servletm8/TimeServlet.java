@@ -13,6 +13,7 @@ import java.time.LocalDateTime;
 import java.time.format.*;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.util.Arrays;
 import java.util.Objects;
 import java.util.TimeZone;
 
@@ -64,7 +65,7 @@ public class TimeServlet extends HttpServlet {
 
         out.println("<h1 style=\"color: #007bff;\">Current time in Time Zone: </h1>");
         out.println("<p style=\"color: #28a745;\">" + formattedZonedDataTime + " ("+requestedTimeZone+ ")</p>");
-
+        Arrays.stream(TimeZone.getAvailableIDs()).forEach(s->out.println("<p style=\"color: #25b245;\">" + s +"</p>"));
         out.println("</body>");
         out.println("</html>");
         out.close();
