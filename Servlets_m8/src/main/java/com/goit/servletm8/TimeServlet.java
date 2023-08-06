@@ -25,22 +25,19 @@ public class TimeServlet extends HttpServlet {
     private static final String DATETIMEZONE_PATTERN = DATETIME_PATTERN+" z";
     public static final String TIMEZONE_PARAMETER = "timezone";
 
-    private final DateTimeFormatter dtf = DateTimeFormatter.ofPattern(DATETIME_PATTERN);
-
-    //private LocalDateTime servletStartedDateTime;
     private ZoneId serveletZoneId;
     private String servletStartedAt;
     private String servletTimeZone;
     private ZonedDateTime zonedDateTime; // Data Time in time zone
     @Override
     public void init(){
-       //servletStartedDateTime = LocalDateTime.now();
+
         serveletZoneId = ZoneId.systemDefault() ;
         zonedDateTime= LocalDateTime.now().atZone(ZoneId.systemDefault());
         servletTimeZone = zonedDateTime.getZone().getId();
         // prepare datetime strings
         servletStartedAt = getDateTimeInTimeZoneString(serveletZoneId.getId());
-        // ZoneId zoneId = ZoneId.of("UTC+4"); // for example
+
 
 
 
