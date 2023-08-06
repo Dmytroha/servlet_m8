@@ -18,6 +18,7 @@ import java.util.TimeZone;
 
 // http://127.0.0.1:8080/Servlets_m8/time     open link in browser
 //http://localhost:8080/time?timezone=UTC+2   with timezone parameter
+// http://127.0.0.1:8080/Servlets_m8/time?timezone=America/New_York
 @WebServlet(value = "/time")
 public class TimeServlet extends HttpServlet {
     private static final String DATETIME_PATTERN = "yyyy-MM-dd  HH:mm:ss";
