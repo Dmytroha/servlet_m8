@@ -63,7 +63,7 @@ public class TimeServlet extends HttpServlet {
         out.println("<p style=\"color: #28a745;\">" + formattedCurrentDateTime +" ("+servletTimeZone+ ") </p>");
 
         out.println("<h1 style=\"color: #007bff;\">Current time in Time Zone: </h1>");
-        out.println("<p style=\"color: #28a745;\">" + formattedZonedDataTime + "( "+requestedTimeZone+ ")</p>");
+        out.println("<p style=\"color: #28a745;\">" + formattedZonedDataTime + " ("+requestedTimeZone+ ")</p>");
 
         out.println("</body>");
         out.println("</html>");
@@ -71,13 +71,12 @@ public class TimeServlet extends HttpServlet {
     }
     private String getDateTimeInTimeZoneString(String stringZoneID){
 
-        TimeZone.getTimeZone(stringZoneID);
+        //TimeZone.getTimeZone(stringZoneID);
         try {
-
             zonedDateTime = LocalDateTime.now(ZoneId.of(stringZoneID))
                     .atZone(ZoneId.of(stringZoneID));
         }catch(DateTimeException e){
-            return "Invalid time zone";
+            return "Invalid time zone: "+stringZoneID;
         }
         // return formatted as string
         return zonedDateTime.format(DateTimeFormatter.ofPattern(DATETIMEZONE_PATTERN));
