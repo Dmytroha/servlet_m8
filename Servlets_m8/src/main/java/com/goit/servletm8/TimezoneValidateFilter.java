@@ -11,7 +11,11 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 
+import java.time.DateTimeException;
+import java.time.ZoneId;
 import java.util.Arrays;
+import java.util.Optional;
+import java.util.Set;
 import java.util.TimeZone;
 
 @WebFilter(value="/time")
@@ -24,19 +28,25 @@ public class TimezoneValidateFilter extends HttpFilter {
 
     @Override
     protected void doFilter(HttpServletRequest req, HttpServletResponse res, FilterChain chain) throws IOException, ServletException {
-        String requestedTimeZone = req.getParameter(TIMEZONE_PARAMETER);
-        if (requestedTimeZone == null || requestedTimeZone.equals(GMT_TZ) || requestedTimeZone.equals(UTC_TZ)) {
-            chain.doFilter(req,res);
-        } else if (!Arrays.asList(TimeZone.getAvailableIDs()).contains(requestedTimeZone)) {
 
-            res.setStatus(400);
-
-            res.setContentType("text/html; charset=utf-8");
-            res.getWriter().write("Invalid Timezone: "+requestedTimeZone);
-            res.getWriter().close();
+        String requestedTimeZone=Optional.ofNullable(req.getParameter(TIMEZONE_PARAMETER)).orElse(UTC_TZ);
+        if (Set.of(GMT_TZ,UTC_TZ).contains(requestedTimeZone)) {
+          chain.doFilter(req,res);
+        } else if(!isValidTimeZone(requestedTimeZone)){
+           res.setContentType("text/html; charset=utf-8");
+           res.sendError(400,"From doFilter: Invalid TimeZone:"+requestedTimeZone);
         }else {
             chain.doFilter(req,res);
         }
 
+    }
+
+    private boolean isValidTimeZone(String timeZone){
+        try {
+            ZoneId.of(timeZone);
+            return true;
+        }catch(DateTimeException e){
+            return false;
+        }
     }
 }

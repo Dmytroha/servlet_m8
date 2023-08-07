@@ -13,9 +13,7 @@ import java.time.LocalDateTime;
 import java.time.format.*;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
-import java.util.Arrays;
-import java.util.Objects;
-import java.util.TimeZone;
+import java.util.Optional;
 
 // http://127.0.0.1:8080/Servlets_m8/time     open link in browser
 //http://localhost:8080/time?timezone=UTC+2   with timezone parameter
@@ -23,34 +21,22 @@ import java.util.TimeZone;
 @WebServlet(value = "/time")
 public class TimeServlet extends HttpServlet {
     private static final String DATETIME_PATTERN = "yyyy-MM-dd  HH:mm:ss";
-    private static final String DATETIMEZONE_PATTERN = DATETIME_PATTERN+" z";
+    private static final String DATETIME_ZONE_PATTERN = DATETIME_PATTERN+" z";
     public static final String TIMEZONE_PARAMETER = "timezone";
 
-    private ZoneId serveletZoneId;
-    private String servletStartedAt;
     private String servletTimeZone;
     private ZonedDateTime zonedDateTime; // Data Time in time zone
     @Override
     public void init(){
-
-        serveletZoneId = ZoneId.systemDefault() ;
         zonedDateTime= LocalDateTime.now().atZone(ZoneId.systemDefault());
         servletTimeZone = zonedDateTime.getZone().getId();
-        // prepare datetime strings
-        servletStartedAt = getDateTimeInTimeZoneString(serveletZoneId.getId());
-
-
-
 
     }
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
-        String requestedTimeZone = req.getParameter(TIMEZONE_PARAMETER);
-        if (Objects.isNull(requestedTimeZone)){requestedTimeZone="UTC";}
-
+        String requestedTimeZone=Optional.ofNullable(req.getParameter(TIMEZONE_PARAMETER)).orElse("UTC");
         String formattedCurrentDateTime  = getDateTimeInTimeZoneString(ZoneId.systemDefault().getId());
-
         String formattedZonedDataTime = getDateTimeInTimeZoneString(requestedTimeZone);
 
         PrintWriter out = resp.getWriter();
@@ -59,27 +45,26 @@ public class TimeServlet extends HttpServlet {
         out.println("<html>");
         out.println("<head><title>Current Time</title></head>");
         out.println("<body style=\"background-color: #f0f0f0; color: #333;\">");
-        out.println("<h1 style=\"color: #007bff;\">DateTime Servlet started at time: "+servletStartedAt+" ("+servletTimeZone+") </h1>");
         out.println("<h1 style=\"color: #007bff;\">Servlet Current time:</h1>");
         out.println("<p style=\"color: #28a745;\">" + formattedCurrentDateTime +" ("+servletTimeZone+ ") </p>");
 
-        out.println("<h1 style=\"color: #007bff;\">Current time in Time Zone: </h1>");
-        out.println("<p style=\"color: #28a745;\">" + formattedZonedDataTime + " ("+requestedTimeZone+ ")</p>");
-        Arrays.stream(TimeZone.getAvailableIDs()).forEach(s->out.println("<p style=\"color: #25b245;\">" + s +"</p>"));
+        out.println("<h1 style=\"color: #007bff;\">Current time in Time Zone:" + " ("+requestedTimeZone + ") </h1>");
+        out.println("<p style=\"color: #28a745;\">" + formattedZonedDataTime + "</p>");
         out.println("</body>");
         out.println("</html>");
         out.close();
     }
     private String getDateTimeInTimeZoneString(String stringZoneID){
 
-        //TimeZone.getTimeZone(stringZoneID);
-        try {
-            zonedDateTime = LocalDateTime.now(ZoneId.of(stringZoneID))
-                    .atZone(ZoneId.of(stringZoneID));
+
+        try{
+            ZoneId zoneId = ZoneId.of(stringZoneID);
+            zonedDateTime = LocalDateTime.now(zoneId)
+                    .atZone(zoneId);
         }catch(DateTimeException e){
-            return "Invalid time zone: "+stringZoneID;
+            return "From doGet: Invalid time zone:"+stringZoneID;
         }
         // return formatted as string
-        return zonedDateTime.format(DateTimeFormatter.ofPattern(DATETIMEZONE_PATTERN));
+        return zonedDateTime.format(DateTimeFormatter.ofPattern(DATETIME_ZONE_PATTERN));
     }
 }
