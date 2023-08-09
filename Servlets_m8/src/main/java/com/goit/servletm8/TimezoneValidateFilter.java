@@ -4,19 +4,14 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebFilter;
 
 import jakarta.servlet.http.HttpFilter;
-
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-
 import java.io.IOException;
-
-
 import java.time.DateTimeException;
 import java.time.ZoneId;
-import java.util.Arrays;
 import java.util.Optional;
 import java.util.Set;
-import java.util.TimeZone;
+
 
 @WebFilter(value="/time")
 public class TimezoneValidateFilter extends HttpFilter {
@@ -43,7 +38,7 @@ public class TimezoneValidateFilter extends HttpFilter {
 
     private boolean isValidTimeZone(String timeZone){
         try {
-            ZoneId.of(timeZone);
+             ZoneId.of(timeZone);
             return true;
         }catch(DateTimeException e){
             return false;
